@@ -4,19 +4,19 @@ const port = 5000
 const mongoose = require('mongoose')
 const {User} = require('./models/User')
 const bodypaser = require('body-parser')
-
+const config = require('./config/key')
 
 app.use(bodypaser.urlencoded({extended: true}))
 
 app.use(bodypaser.json());
 
-mongoose.connect('mongodb+srv://song:song@boilerplate.smms3.mongodb.net/boilerplate?retryWrites=true&w=majority',{
+mongoose.connect(config.mongoURI,{
     useNewUrlParser:true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
 }).then(()=>console.log("moongoDB connect!"))
 .catch(err=>console.log(err))
 
 
-app.get('/',(req,res) => res.send('Hello world'))
+app.get('/',(req,res) => res.send('Hello world 변화가 감지 되는가?'))
 
 app.post('/register',(req,res) => {
 
