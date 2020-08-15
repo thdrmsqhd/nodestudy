@@ -8,6 +8,7 @@ const userSchema = mongoose.Schema({
     email:{
         type:String,
         trim: true,
+        maxlength:50,
         unique: 1
     },
     password:{
@@ -31,6 +32,6 @@ const userSchema = mongoose.Schema({
     }
 })
 
-const User = mongoose.model('User',userSchema)
+const User = mongoose.model('User',userSchema)//스키마를 모델로 감싸줌
 
-module.exports = {User}
+module.exports = {User}//다른 파일에서도 사용가능하도록 export
