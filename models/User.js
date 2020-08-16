@@ -71,13 +71,13 @@ userSchema.methods.comparePassword= function(plainPassword, cb){//cb는 (err,isM
 userSchema.methods.generateToken = function(cb){
     var user = this;
     // jsonwebtoken을 이용하여 토큰을 생성
-    console.log(user + ' 요청 객체의 정보')
-    console.log(user._id + ' 요청 객체의 아이디값')
+    // console.log(user + ' 요청 객체의 정보')
+    // console.log(user._id + ' 요청 객체의 아이디값')
     var token = jwt.sign({_id:user._id}, 'secriteToken')//json웹토큰의 sign함수를 이용
 
     // user._id + 'secriteToken' = token
     user.token = token
-    console.log('유저 토큰 정보 '+user.token)
+    // console.log('유저 토큰 정보 '+user.token)
 
     user.save(function(err,user){
         if(err) return cb(err)
@@ -88,15 +88,12 @@ userSchema.methods.generateToken = function(cb){
 
 userSchema.statics.findByToken = function(token, cb){
     var user = this;
-
     //토큰 생성시 user._id + secrtieToken
     //토큰을 디코드 한다.
-
     jwt.verify(token,'secriteToken',function(err,decoded){//verify함수를 이용(전달된 매개변수, 토큰생성할때 쓴 문자열 이용)하면 콜백함수로 디코드 된 값이 전달된다.
         //decoded == user._id
         //user._id를 이용하여 유저를 찾은 후
         //클라이언트에서 가져온 token과 DB에 보관된 토큰이 일치하는지 비교
-
         user.findOne({"_id":decoded,"token":token},function (err,user){
             if (err) return cb(err);
             cb(null,user)

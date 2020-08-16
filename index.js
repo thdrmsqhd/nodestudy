@@ -27,7 +27,7 @@ mongoose.connect(config.mongoURI,{
 app.get('/', (req, res) => res.send('Hello world 변경이 적용되는가? ffff')) // '/', 에 res를 반환해준다.
 
 
-app.post('/api/user/register',(req, res) => { //post방식으로 endpoint => /register로 요청시 콜백 함수를 실행한다.
+app.post('/api/users/register',(req, res) => { //post방식으로 endpoint => /register로 요청시 콜백 함수를 실행한다.
     //회원 가입시 필요한 정보들을 클라이언트에서 가져오면
     //db에 저장해 준다.
 
@@ -42,7 +42,7 @@ app.post('/api/user/register',(req, res) => { //post방식으로 endpoint => /re
 })
 
 
-app.post('/api/user/login', (req, res) => {
+app.post('/api/users/login', (req, res) => {
     //req body email 과 일치하는 객체를 찾은후 req body password 와 데이터 베이스 password를 비교한다.
      //요청된 이메일을 데이터베이스에서 찾는다.
     User.findOne({"email":req.body.email},(err,user)=>{
@@ -72,7 +72,7 @@ app.post('/api/user/login', (req, res) => {
     })
 })
 
-app.get('/api/user/', auth,(req,res)=>{//엔드포인트로 요청하면 auth미들웨어를 거쳐 req,res를 처리한다.
+app.get('/api/users/', auth,(req,res)=>{//엔드포인트로 요청하면 auth미들웨어를 거쳐 req,res를 처리한다.
     //함수에 진입했다면 auth미들웨어 인증을 통과 함을 의미함
     res.status(200).json({//성공적으로 미들웨어를 통과했다면 json타입으로 전달하고 싶은 정보를 실어준다
         _id: req.user._id,
@@ -86,5 +86,18 @@ app.get('/api/user/', auth,(req,res)=>{//엔드포인트로 요청하면 auth미
     })
 })
    
+
+app.get('/api/users/logout',auth,(req,res)=>{
+    console.log('로그아웃 실행')
+    console.log('request 유저 아이디 검색' + req.user._id)
+    User.findOneAndUpdate({_id: req.user._id},{token: ""}, (err,user)=>{
+        if(err) return res.jsoin({success:false, err})
+        return res.status(200).send({
+            success:true
+        })
+    })
+})
+
+
 
 app.listen(port, () => console.log(`Example app listening on port${port}!` ))
