@@ -85,6 +85,24 @@ userSchema.methods.generateToken = function(cb){
     })
 }
 
+
+userSchema.statics.findByToken = function(token, cb){
+    var user = this;
+
+    //토큰 생성시 user._id + secrtieToken
+    //토큰을 디코드 한다.
+
+    jwt.verify(token,'secriteToken',function(err,decoded){//verify함수를 이용(전달된 매개변수, 토큰생성할때 쓴 문자열 이용)하면 콜백함수로 디코드 된 값이 전달된다.
+        //decoded == user._id
+        //user._id를 이용하여 유저를 찾은 후
+        //클라이언트에서 가져온 token과 DB에 보관된 토큰이 일치하는지 비교
+
+        user.findOne({"_id":decoded,"token":token},function (err,user){
+            if (err) return cb(err);
+            cb(null,user)
+        })
+    })
+}
 const User = mongoose.model('User',userSchema)//user스키마를 User라는 이름의 모델로 감싸줌
 
 module.exports = {User}//다른 파일에서도 사용가능하도록 export

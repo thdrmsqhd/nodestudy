@@ -6,7 +6,7 @@ const {User} = require("./models/User") // User 객체 임포트
 const bodyParser = require('body-parser') // bodyparser 임포트
 const config = require('./config/key')
 const cookieParser = require('cookie-parser')//쿠키파서 임포트
-
+const {auth} = require('./middleware/auth')
 // 바디 파서 사용시 아래 두가지(urlencoded, json) 설정이 필요함
 //application/x-www-form-urlencoded 타입을 분석해서 가져옴
 app.use(bodyParser.urlencoded({extended:true})); // 서버에서 분석해서 가져올 수 있게
@@ -27,7 +27,7 @@ mongoose.connect(config.mongoURI,{
 app.get('/', (req, res) => res.send('Hello world 변경이 적용되는가? ffff')) // '/', 에 res를 반환해준다.
 
 
-app.post('/register',(req, res) => { //post방식으로 endpoint => /register로 요청시 콜백 함수를 실행한다.
+app.post('/api/user/register',(req, res) => { //post방식으로 endpoint => /register로 요청시 콜백 함수를 실행한다.
     //회원 가입시 필요한 정보들을 클라이언트에서 가져오면
     //db에 저장해 준다.
 
@@ -42,7 +42,7 @@ app.post('/register',(req, res) => { //post방식으로 endpoint => /register로
 })
 
 
-app.post('/login', (req, res) => {
+app.post('/api/user/login', (req, res) => {
     //req body email 과 일치하는 객체를 찾은후 req body password 와 데이터 베이스 password를 비교한다.
      //요청된 이메일을 데이터베이스에서 찾는다.
     User.findOne({"email":req.body.email},(err,user)=>{
@@ -63,11 +63,26 @@ app.post('/login', (req, res) => {
                 if(err) return res.status(400).send(err);
 
                 //토큰을 저장한다. 쿠키 또는 로컬 스토리지에
-                res.cookie("x_auth",user.token).status(200).json({loginSuccess:true,userId: user._id})
+                res.cookie("x_auth",user.token).status(200).json(//x_auth라는 이름으로 user token저장
+                    {loginSuccess:true,userId: user._id})
                 
             })    
         })
         
+    })
+})
+
+app.get('/api/user/', auth,(req,res)=>{//엔드포인트로 요청하면 auth미들웨어를 거쳐 req,res를 처리한다.
+    //함수에 진입했다면 auth미들웨어 인증을 통과 함을 의미함
+    res.status(200).json({//성공적으로 미들웨어를 통과했다면 json타입으로 전달하고 싶은 정보를 실어준다
+        _id: req.user._id,
+        isAdmin: req.user.role === 0? false: true,
+        isAuth: true,
+        email: req.user.email,
+        name: req.user.name,
+        lastname: req.user.lastname,
+        role: req.user.role,
+        image: req.user.image
     })
 })
    
