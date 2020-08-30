@@ -26,6 +26,9 @@ mongoose.connect(config.mongoURI,{
 
 app.get('/', (req, res) => res.send('Hello world 변경이 적용되는가? ffff')) // '/', 에 res를 반환해준다.
 
+app.get('/api/hello',(req,res)=>{
+    res.send("안녕하세요")
+})
 
 app.post('/api/users/register',(req, res) => { //post방식으로 endpoint => /register로 요청시 콜백 함수를 실행한다.
     //회원 가입시 필요한 정보들을 클라이언트에서 가져오면
