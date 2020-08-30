@@ -8,7 +8,7 @@ function App() {
   return (
     <Router>
       <div>
-        <switch>
+        <Switch>
           <Route exact path="/">
             <LandingPage />
           </Route>
@@ -18,7 +18,7 @@ function App() {
           <Route exact path="/register">
             <RegisterPage />
           </Route>
-        </switch>
+        </Switch>
       </div>
     </Router>
   );
