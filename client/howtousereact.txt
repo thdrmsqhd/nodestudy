@@ -1,0 +1,2 @@
+1. npx create-react app .
+  - 현재 폴더에 리액트 앱 생성
